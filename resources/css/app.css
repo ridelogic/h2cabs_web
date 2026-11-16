@@ -1,0 +1,511 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../app/Content/**/*.php';
+
+/* Short windows (e.g. laptops at 100% zoom): use with lg: to tighten vertical spacing in the homepage hero. */
+@custom-variant short (@media (max-height: 760px));
+
+/*
+|--------------------------------------------------------------------------
+| H2 CABS design tokens
+|--------------------------------------------------------------------------
+| Blue, green and white, taken from the H2 CABS logo. Use these tokens
+| (bg-brand-blue-700, text-brand-green-600, ...) instead of raw hex values.
+*/
+@theme {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+
+    /*
+    | Brand palette (navy, cyan, green), matching the homepage hero. These
+    | named tokens are the source of truth; the brand-blue / brand-green
+    | scales below are derived from them so every page shares one palette.
+    */
+    --color-brand-navy: #08265f;
+    --color-brand-navy-deep: #061a46;
+    --color-brand-secondary: #103b83;
+    --color-brand-cyan: #26d9f2;
+    --color-brand-green: #0dbb70;
+    --color-brand-green-hover: #079957;
+    --color-page: #f3f6fc;
+
+    /* Light blue-grey section tint (was a warm sand colour). */
+    --color-sand: #eef3fc;
+    /* WhatsApp's own brand colour, kept for recognisability. */
+    --color-whatsapp: #1fae55;
+    --color-whatsapp-dark: #168a43;
+
+    --color-brand-blue-950: #061a46;
+    --color-brand-blue-900: #08265f;
+    --color-brand-blue-800: #0c2f70;
+    --color-brand-blue-700: #103b83;
+    --color-brand-blue-600: #1a4fa3;
+    --color-brand-blue-500: #2f6bcb;
+    --color-brand-blue-200: #bed0ee;
+    --color-brand-blue-100: #dfe8f7;
+    --color-brand-blue-50: #eef3fc;
+
+    /* 600 = primary green; 700/800 are darker shades that stay readable as text on white. */
+    --color-brand-green-800: #05683c;
+    --color-brand-green-700: #067a46;
+    --color-brand-green-600: #0dbb70;
+    --color-brand-green-500: #2bcb85;
+    --color-brand-green-200: #a9eccb;
+    --color-brand-green-100: #d2f6e3;
+    --color-brand-green-50: #eafbf3;
+
+    --color-brand-cyan-600: #0e9fbd;
+    --color-brand-cyan-200: #a8eef9;
+    --color-brand-cyan-50: #e7fafd;
+
+    --color-ink: #24344d;
+    --color-muted: #56657d;
+    --color-line: #dce5f2;
+    --color-surface: #f3f6fc;
+
+    --shadow-card: 0 1px 2px rgb(8 38 95 / 0.04), 0 8px 24px -8px rgb(8 38 95 / 0.12);
+    --shadow-lift: 0 2px 4px rgb(8 38 95 / 0.05), 0 18px 40px -12px rgb(16 59 131 / 0.28);
+
+    --radius-card: 1.25rem;
+
+    /* Admin portal palette (same brand colours) */
+    --color-admin-navy: #08265f;
+    --color-admin-navy-deep: #061a46;
+    --color-admin-green: #0dbb70;
+    --color-admin-green-dark: #079957;
+    --color-admin-bg: #f3f6fc;
+    --color-admin-accent: #eaf1fc;
+    --color-admin-line: #dce5f2;
+    --shadow-admin: 0 1px 2px rgb(8 38 95 / 0.04), 0 4px 16px -6px rgb(8 38 95 / 0.08);
+    --shadow-admin-hover: 0 2px 4px rgb(8 38 95 / 0.05), 0 14px 32px -12px rgb(8 38 95 / 0.22);
+}
+
+/* Subtle entrance animation; disabled for reduced motion via motion-safe: and the base reset. */
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 5.5rem;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-white font-sans text-ink antialiased;
+    }
+
+    /* Blue focus ring: at least 3:1 against both white and navy backgrounds. */
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-brand-blue-500;
+    }
+
+    a {
+        text-underline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+@layer components {
+    .container-site {
+        @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    }
+
+    .section {
+        @apply py-16 sm:py-20 lg:py-24;
+    }
+
+    .eyebrow {
+        @apply inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-brand-green-700 uppercase;
+    }
+
+    .eyebrow::before {
+        content: '';
+        @apply h-0.5 w-6 rounded-full bg-brand-green-500;
+    }
+
+    .btn {
+        @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold whitespace-nowrap transition duration-200 sm:text-base;
+    }
+
+    .btn-primary {
+        @apply bg-brand-green font-bold text-white shadow-md shadow-brand-green/25 hover:bg-brand-green-hover hover:shadow-lg;
+    }
+
+    .btn-secondary {
+        @apply bg-brand-navy text-white shadow-md shadow-brand-navy/20 hover:bg-brand-secondary;
+    }
+
+    .btn-outline {
+        @apply border border-brand-blue-200 bg-white text-brand-navy hover:border-brand-navy hover:bg-brand-blue-50;
+    }
+
+    /* Disabled: muted and non-interactive, whatever the variant. */
+    .btn:disabled,
+    .btn[aria-disabled='true'] {
+        @apply pointer-events-none cursor-not-allowed opacity-50 shadow-none saturate-50;
+    }
+
+    .btn-light {
+        @apply bg-white text-brand-blue-800 hover:bg-brand-blue-50;
+    }
+
+    .btn-ghost-light {
+        @apply border border-white/40 text-white hover:bg-white/10;
+    }
+
+    .card {
+        @apply rounded-(--radius-card) border border-line bg-white shadow-card;
+    }
+
+    .nav-link {
+        @apply rounded-full px-3 py-2 text-sm font-medium text-muted transition hover:bg-brand-blue-50 hover:text-brand-blue-800;
+    }
+
+    .nav-link-active {
+        @apply bg-brand-blue-50 font-semibold text-brand-blue-800;
+    }
+
+    .btn-whatsapp {
+        @apply bg-whatsapp text-white shadow-md shadow-whatsapp/25 hover:bg-whatsapp-dark;
+    }
+
+    .pill {
+        @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+    }
+
+    .heading-display {
+        @apply font-display font-bold tracking-tight text-balance;
+    }
+
+    /* Forms */
+    .form-label {
+        @apply mb-1.5 block text-sm font-semibold text-brand-blue-950;
+    }
+
+    .form-control {
+        @apply block min-h-12 w-full rounded-xl border border-line bg-white px-4 py-3 text-base text-ink shadow-xs transition placeholder:text-muted/70 focus:border-brand-blue-500 focus:ring-4 focus:ring-brand-blue-100 focus:outline-none;
+    }
+
+    .form-control[aria-invalid='true'] {
+        @apply border-red-500 focus:ring-red-100;
+    }
+
+    .form-error {
+        @apply mt-1.5 flex items-start gap-1.5 text-sm font-medium text-red-700;
+    }
+
+    .form-help {
+        @apply mt-1.5 text-sm text-muted;
+    }
+
+    /* Numbered step heading in the booking form */
+    .booking-step {
+        @apply flex items-center gap-3 text-lg font-bold text-brand-blue-950 sm:text-xl;
+    }
+
+    .booking-step > span {
+        @apply flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-blue-700 text-sm text-white;
+    }
+
+    .choice-card {
+        @apply flex h-full cursor-pointer items-center gap-3 rounded-2xl border-2 border-line bg-white p-4 transition hover:border-brand-blue-200 has-checked:border-brand-green-600 has-checked:bg-brand-green-50 has-focus-visible:ring-4 has-focus-visible:ring-brand-blue-100;
+    }
+
+    /*
+    | Compact homepage booking form (components/booking/compact-form.blade.php).
+    | Scoped to .booking-compact so the /booking page form is unchanged.
+    */
+    /* Book a Taxi section palette (homepage only) */
+    .booking-compact {
+        --bk-navy: #12336b;
+        --bk-border: #d9e2f0;
+        --bk-green: #16a765;
+        --bk-green-hover: #128a54;
+    }
+    .booking-compact .form-label { @apply mb-1 text-xs text-(--bk-navy); }
+    .booking-compact .form-control { @apply min-h-9 rounded-lg border-(--bk-border) bg-white px-3 py-1.5 text-sm text-(--bk-navy) shadow-none; }
+    .booking-compact textarea.form-control { @apply min-h-16 resize-y; }
+    .booking-compact .form-help { @apply mt-1 text-[11px] leading-snug; }
+    .booking-compact .form-error { @apply mt-1 text-xs; }
+    /* Green only for the primary booking button (and the selected tab below) */
+    .booking-compact .btn-primary { @apply bg-(--bk-green) shadow-(--bk-green)/25 hover:bg-(--bk-green-hover); }
+    /* Location fields: smaller marker and padding to suit the 36px inputs */
+    .booking-compact [data-place-field] [data-place-input] { @apply pr-9 pl-9; }
+    .booking-compact [data-place-field] .relative > span[aria-hidden]:first-child { @apply left-3 size-3.5 ring-2; }
+    .booking-compact [data-place-spinner] { @apply right-3 size-4; }
+
+    /* Local / Rental / Outstation tabs over the booking_type radios (one compact row) */
+    .trip-tabs { @apply grid max-w-md grid-cols-3 gap-2; }
+    .trip-tab {
+        @apply flex min-h-10 min-w-0 cursor-pointer items-center justify-center rounded-lg border border-(--bk-border) bg-white px-2 text-sm font-semibold text-(--bk-navy) transition select-none hover:border-(--bk-green);
+    }
+    .trip-tab:has(:checked),
+    .booking-compact:has([value='outstation_round_trip']:checked) .trip-tab-outstation {
+        @apply border-(--bk-green) bg-(--bk-green) text-white shadow-sm;
+    }
+    .trip-tab:has(:focus-visible),
+    .trip-subtab:has(:focus-visible) {
+        @apply outline-2 outline-offset-2 outline-brand-blue-500;
+    }
+    /* One way / Round trip, only while an Outstation type is selected */
+    .trip-subtabs { @apply mt-2 hidden max-w-md grid-cols-2 gap-1 rounded-lg bg-[#f1f6fc] p-1; }
+    .booking-compact:has([value^='outstation']:checked) .trip-subtabs { @apply grid; }
+    .trip-subtab { @apply flex min-h-8 cursor-pointer items-center justify-center rounded-md text-xs font-semibold text-muted transition select-none; }
+    .booking-compact:has([value='outstation_one_way']:checked) .trip-subtab-oneway,
+    .trip-subtab-round:has(:checked) {
+        @apply bg-white text-(--bk-navy) shadow-sm ring-1 ring-(--bk-green);
+    }
+
+    /* Rendered Markdown of a custom page (Admin → Website Pages) */
+    .page-content {
+        @apply text-lg leading-relaxed text-ink/90;
+
+        & > * + * { @apply mt-5; }
+        & h2 { @apply mt-10 font-display font-bold tracking-tight text-balance text-2xl text-brand-blue-950 sm:text-3xl; }
+        & h3 { @apply mt-8 text-xl font-bold text-brand-blue-950; }
+        & h4, & h5, & h6 { @apply mt-6 font-bold text-brand-blue-950; }
+        & a { @apply font-semibold text-brand-blue-700 underline underline-offset-2 hover:text-brand-green-700; }
+        & ul { @apply list-disc space-y-2 pl-6 marker:text-brand-green-600; }
+        & ol { @apply list-decimal space-y-2 pl-6 marker:font-semibold marker:text-brand-blue-700; }
+        & strong { @apply font-bold text-brand-blue-950; }
+        & blockquote { @apply rounded-r-xl border-l-4 border-brand-green-500 bg-white px-5 py-3 text-muted; }
+        & hr { @apply my-10 border-line; }
+        & code { @apply rounded bg-white px-1.5 py-0.5 text-base; }
+        & img { @apply rounded-xl; }
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Admin portal
+|--------------------------------------------------------------------------
+| Everything below is scoped to .admin-app (the admin layout's <body>) or
+| uses admin-* class names, so the public website is unaffected.
+*/
+@layer components {
+    .admin-app {
+        @apply bg-admin-bg text-ink;
+    }
+
+    /* Shared building blocks inside the admin */
+    .admin-app .card {
+        @apply rounded-2xl border-admin-line shadow-admin;
+    }
+
+    .admin-app .btn {
+        @apply min-h-10 rounded-xl px-5 py-2.5 text-sm;
+    }
+
+    .admin-app .btn-primary {
+        @apply bg-admin-green shadow-sm shadow-admin-green/20 hover:bg-admin-green-dark;
+    }
+
+    .admin-app .btn-outline {
+        @apply border-admin-line text-admin-navy hover:border-brand-blue-200 hover:bg-admin-accent;
+    }
+
+    .admin-app .form-control {
+        @apply min-h-11 rounded-xl border-admin-line py-2.5 text-[0.9375rem] focus:border-brand-blue-500;
+    }
+
+    .admin-app table thead {
+        @apply bg-[#f8fafd] text-[0.6875rem] font-semibold tracking-wider text-slate-500;
+    }
+
+    .admin-app table tbody tr {
+        @apply transition-colors hover:bg-[#f9fbfe];
+    }
+
+    /* Sidebar */
+    .admin-sidebar {
+        @apply fixed inset-y-0 left-0 z-50 isolate flex w-60 -translate-x-full flex-col bg-admin-navy text-white transition-[translate,width] duration-300 ease-out lg:translate-x-0;
+        background-image:
+            radial-gradient(120% 60% at 0% 100%, rgb(18 160 92 / 0.16), transparent 60%),
+            linear-gradient(180deg, var(--color-admin-navy) 0%, var(--color-admin-navy-deep) 100%);
+    }
+
+    [data-sidebar-open='true'] .admin-sidebar {
+        @apply translate-x-0 shadow-2xl;
+    }
+
+    .admin-nav-link {
+        @apply relative flex min-h-11 items-center gap-2.5 rounded-xl px-3 text-[0.9375rem] font-medium whitespace-nowrap text-white/75 transition hover:bg-white/8 hover:text-white focus-visible:outline-white;
+    }
+
+    .admin-nav-link[aria-current='page'] {
+        @apply bg-admin-green font-semibold text-white shadow-lg shadow-admin-green/30;
+        background-image: linear-gradient(135deg, #1fbf6e 0%, var(--color-admin-green) 55%, var(--color-admin-green-dark) 100%);
+    }
+
+    .admin-main {
+        @apply min-h-screen transition-[padding] duration-300 ease-out lg:pl-60;
+    }
+
+    /* Collapsed sidebar (desktop only): icons with tooltips */
+    @media (min-width: 64rem) {
+        [data-sidebar='collapsed'] .admin-sidebar {
+            @apply w-20;
+        }
+
+        [data-sidebar='collapsed'] .admin-main {
+            @apply pl-20;
+        }
+
+        [data-sidebar='collapsed'] .admin-collapse-hide {
+            @apply sr-only;
+        }
+
+        [data-sidebar='collapsed'] .admin-nav-link {
+            @apply justify-center px-0;
+        }
+
+        [data-sidebar='collapsed'] .admin-brand {
+            @apply justify-center px-0;
+        }
+    }
+
+    /* Top bar */
+    .admin-topbar {
+        @apply sticky top-0 z-30 border-b border-admin-line bg-white/90 backdrop-blur-md;
+    }
+
+    .admin-icon-btn {
+        @apply relative inline-flex size-10 shrink-0 items-center justify-center rounded-xl text-slate-600 transition hover:bg-admin-accent hover:text-admin-navy;
+    }
+
+    /* Cards and panels */
+    .admin-panel {
+        @apply rounded-2xl border border-admin-line bg-white shadow-admin;
+    }
+
+    .admin-panel-header {
+        @apply flex flex-wrap items-start justify-between gap-3 border-b border-admin-line px-5 py-4 sm:px-6;
+    }
+
+    .admin-panel-title {
+        @apply flex items-center gap-2.5 text-base font-bold text-admin-navy sm:text-lg;
+    }
+
+    .admin-panel-subtitle {
+        @apply mt-0.5 text-sm text-slate-500;
+    }
+
+    .admin-kpi {
+        @apply relative flex items-center gap-4 overflow-hidden rounded-2xl border border-admin-line bg-white p-5 shadow-admin transition duration-200 hover:-translate-y-0.5 hover:border-brand-blue-200 hover:shadow-admin-hover;
+    }
+
+    .admin-tile {
+        @apply flex size-12 shrink-0 items-center justify-center rounded-xl;
+    }
+
+    .admin-action {
+        @apply flex h-full items-center gap-3.5 rounded-xl border border-admin-line bg-white p-4 transition duration-200 hover:-translate-y-0.5 hover:border-brand-blue-200 hover:shadow-admin-hover;
+    }
+
+    .admin-status {
+        @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap ring-1 ring-inset;
+    }
+
+    .admin-status::before {
+        content: '';
+        @apply size-1.5 rounded-full bg-current;
+    }
+}
+
+/*
+| Brand gradient for the footer and closing call-to-action bands: the
+| homepage hero's navy → blue direction with a soft cyan glow top-right.
+| It stops at the secondary blue so small white text stays readable.
+*/
+.brand-gradient {
+    background-color: var(--color-brand-navy-deep);
+    background-image:
+        radial-gradient(55% 90% at 100% 0%, rgb(38 217 242 / 0.2), transparent 70%),
+        linear-gradient(100deg, var(--color-brand-navy-deep) 0%, var(--color-brand-navy) 42%, var(--color-brand-secondary) 100%);
+}
+
+/* The hero's large curved arc, as a decorative layer behind the content. */
+.brand-arc {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.brand-arc::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 18%;
+    left: 40%;
+    width: 120rem;
+    height: 90rem;
+    border-radius: 100%;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    background: rgb(255 255 255 / 0.03);
+    pointer-events: none;
+}
+
+/* Homepage hero scene: fade the photo's top (and, from lg, left) edge into the gradient. */
+.hero-scene {
+    mask-image: linear-gradient(to bottom, transparent 0%, black 22%);
+}
+
+@media (min-width: 64rem) {
+    .hero-scene {
+        mask-image: linear-gradient(to right, transparent 0%, black 24%), linear-gradient(to bottom, transparent 0%, black 26%);
+        mask-composite: intersect;
+    }
+}
+
+/*
+| Homepage: the header is transparent over the blue hero until the page
+| scrolls or the mobile menu opens (data-scrolled is set in site.js).
+*/
+[data-site-header][data-overlay]:not([data-scrolled='true']):not(:has([data-nav-toggle][aria-expanded='true'])) {
+    @apply border-transparent bg-transparent backdrop-blur-none;
+
+    /* Same logo, light text so it reads on the navy hero (CABS stays green). */
+    & .header-logo .logo-name { @apply text-white; }
+    & .header-logo .logo-tagline { @apply text-white/75; }
+    & .nav-link { @apply rounded-none px-3 text-base font-medium text-white hover:bg-transparent hover:text-brand-cyan 2xl:px-5 2xl:text-lg; }
+    /* Active item: short green underline */
+    & .nav-link-active {
+        @apply bg-transparent font-semibold text-white;
+        background-image: linear-gradient(var(--color-brand-green), var(--color-brand-green));
+        background-repeat: no-repeat;
+        background-position: center 100%;
+        background-size: calc(100% - 1.5rem) 3px;
+    }
+    & .header-toggle { @apply border-white/40 text-white hover:bg-white/10; }
+    & .header-cta { @apply min-h-14 px-8 text-lg font-bold shadow-lg shadow-brand-green/30; }
+}
+
+/* Header gains a shadow once the page has scrolled (toggled in app.js). */
+[data-site-header][data-scrolled='true'] {
+    @apply shadow-[0_6px_24px_-12px_rgb(15_27_45/0.25)];
+}

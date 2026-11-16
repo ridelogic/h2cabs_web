@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin
+Disallow: /booking/confirmation
+
+# Production: add your live sitemap URL, e.g.
+# Sitemap: https://www.example.com/sitemap.xml
+# Non-production environments also send a "noindex" robots meta tag.
